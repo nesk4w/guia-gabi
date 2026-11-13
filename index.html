@@ -1,767 +1,501 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guia de Suporte e Regulação — Gabi & Thiago</title>
-    <!-- Fontes modernas: Plus Jakarta Sans (títulos) e Inter (leitura confortável) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Plus Jakarta Sans', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guia de Regulação e Apoio — Gabi & Thiago</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f4f6f9;
+      color: #1e293b;
+      -webkit-tap-highlight-color: transparent;
+    }
+    h1, h2, h3, .font-display {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-    <style>
-        /* Esconde checkboxes nativos mantendo acessibilidade */
-        input[type="checkbox"] {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-        }
+    /* Estados dos cartões interativos */
+    .option-card {
+      transition: all 0.18s ease;
+      cursor: pointer;
+      user-select: none;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .option-card:active {
+      transform: scale(0.99);
+    }
 
-        /* Transições suaves e táteis nos cartões */
-        .card-opcao {
-            transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
-        }
+    .check-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 9999px;
+      border: 2px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.18s ease;
+      background: #ffffff;
+    }
+    .check-circle svg {
+      opacity: 0;
+      transform: scale(0.6);
+      transition: all 0.18s ease;
+      color: #ffffff;
+    }
+    .option-card.selected .check-circle svg {
+      opacity: 1;
+      transform: scale(1);
+    }
 
-        .card-opcao:hover {
-            transform: translateY(-1px);
-            border-color: #cbd5e1;
-            box-shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.06);
-        }
+    /* Tema Âmbar — Sinais */
+    .option-card[data-theme="amber"].selected {
+      background-color: #fffbeb;
+      border-color: #f59e0b;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.12);
+    }
+    .option-card[data-theme="amber"].selected .check-circle {
+      background-color: #f59e0b;
+      border-color: #f59e0b;
+    }
 
-        .card-opcao:active {
-            transform: scale(0.99);
-        }
+    /* Tema Vermelho/Rosa — O que Evitar */
+    .option-card[data-theme="rose"].selected {
+      background-color: #fff1f2;
+      border-color: #f43f5e;
+      box-shadow: 0 2px 8px rgba(244, 63, 94, 0.12);
+    }
+    .option-card[data-theme="rose"].selected .check-circle {
+      background-color: #f43f5e;
+      border-color: #f43f5e;
+    }
 
-        /* Estado selecionado base */
-        input[type="checkbox"]:checked + .card-opcao {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.08);
-        }
+    /* Tema Verde — O que Ajuda */
+    .option-card[data-theme="emerald"].selected {
+      background-color: #ecfdf5;
+      border-color: #10b981;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);
+    }
+    .option-card[data-theme="emerald"].selected .check-circle {
+      background-color: #10b981;
+      border-color: #10b981;
+    }
 
-        /* Checkmark circular à direita */
-        .check-badge {
-            transition: all 0.2s ease;
-        }
-        .check-badge svg {
-            opacity: 0;
-            transform: scale(0.5);
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        input[type="checkbox"]:checked + .card-opcao .check-badge svg {
-            opacity: 1;
-            transform: scale(1);
-        }
+    /* Tema Índigo — Previsibilidade e Masking */
+    .option-card[data-theme="indigo"].selected {
+      background-color: #eef2ff;
+      border-color: #6366f1;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12);
+    }
+    .option-card[data-theme="indigo"].selected .check-circle {
+      background-color: #6366f1;
+      border-color: #6366f1;
+    }
 
-        /* TEMA 1: SINAIS DE SOBRECARGA (Âmbar / Laranja Suave) */
-        .check-sinal:checked + .card-opcao {
-            background-color: #fffbeb;
-            border-color: #f59e0b;
-            color: #78350f;
-        }
-        .check-sinal:checked + .card-opcao .icone {
-            background-color: #f59e0b;
-            color: #ffffff;
-        }
-        .check-sinal:checked + .card-opcao .check-badge {
-            background-color: #f59e0b;
-            border-color: #f59e0b;
-        }
-
-        /* TEMA 2: O QUE NÃO FAZER (Coral / Vermelho Suave) */
-        .check-evitar:checked + .card-opcao {
-            background-color: #fff1f2;
-            border-color: #f43f5e;
-            color: #881337;
-        }
-        .check-evitar:checked + .card-opcao .icone {
-            background-color: #f43f5e;
-            color: #ffffff;
-        }
-        .check-evitar:checked + .card-opcao .check-badge {
-            background-color: #f43f5e;
-            border-color: #f43f5e;
-        }
-
-        /* TEMA 3: O QUE AJUDA (Esmeralda / Verde Calmo) */
-        .check-ajudar:checked + .card-opcao {
-            background-color: #ecfdf5;
-            border-color: #10b981;
-            color: #064e3b;
-        }
-        .check-ajudar:checked + .card-opcao .icone {
-            background-color: #10b981;
-            color: #ffffff;
-        }
-        .check-ajudar:checked + .card-opcao .check-badge {
-            background-color: #10b981;
-            border-color: #10b981;
-        }
-
-        /* TEMA 4: PREVISIBILIDADE E MASKING (Índigo / Azul Sereno) */
-        .check-rotina:checked + .card-opcao {
-            background-color: #eef2ff;
-            border-color: #6366f1;
-            color: #312e81;
-        }
-        .check-rotina:checked + .card-opcao .icone {
-            background-color: #6366f1;
-            color: #ffffff;
-        }
-        .check-rotina:checked + .card-opcao .check-badge {
-            background-color: #6366f1;
-            border-color: #6366f1;
-        }
-
-        /* Evitar cortes em quebras de página no PDF */
-        .evitar-quebra {
-            page-break-inside: avoid;
-            break-inside: avoid;
-        }
-
-        @media print {
-            body { background-color: #ffffff; padding: 0; }
-            .print-hidden { display: none !important; }
-            .shadow-2xl { box-shadow: none !important; border: 1px solid #e2e8f0; }
-        }
-    </style>
+    /* Regras de proteção contra corte na exportação PDF */
+    .pdf-section {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  </style>
 </head>
-<body class="bg-slate-100/90 min-h-screen py-6 px-3 sm:px-6 lg:px-8 font-sans text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900">
+<body class="min-h-screen py-6 px-4 sm:px-6">
 
-    <!-- Container Principal -->
-    <div id="conteudo-pdf" class="bg-white rounded-[2rem] shadow-2xl shadow-slate-200/80 max-w-4xl mx-auto overflow-hidden border border-slate-200/80">
-        
-        <!-- Cabeçalho Moderno -->
-        <div class="relative bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-6 py-10 sm:px-12 sm:py-12 text-white overflow-hidden">
-            <!-- Brilho decorativo sutil de fundo -->
-            <div class="absolute -top-24 -right-24 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+  <!-- Overlay de carregamento durante geração do PDF -->
+  <div id="pdf-loading" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/80 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl p-6 shadow-xl flex flex-col items-center gap-3 max-w-xs text-center">
+      <div class="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+      <p class="font-display font-bold text-slate-800 text-base">Gerando PDF...</p>
+      <p class="text-xs text-slate-500">Ajustando o layout para página A4 sem cortes.</p>
+    </div>
+  </div>
 
-            <div class="relative z-10 flex flex-col items-center text-center">
-                <!-- Tag superior -->
-                <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-white/10 text-indigo-200 border border-white/15 mb-5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                    Protocolo Pessoal de Regulação
-                </span>
+  <!-- Modal de confirmação para limpar seleção -->
+  <div id="reset-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs px-4">
+    <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-slate-100">
+      <h3 class="font-display font-bold text-lg text-slate-900">Limpar todas as marcações?</h3>
+      <p class="text-sm text-slate-600 mt-2">Isso vai desmarcar todos os cartões selecionados e apagar o campo de observações.</p>
+      <div class="flex justify-end gap-2 mt-6">
+        <button type="button" onclick="fecharModalReset()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition">Cancelar</button>
+        <button type="button" onclick="confirmarReset()" class="px-4 py-2 rounded-xl text-sm font-semibold bg-rose-600 text-white hover:bg-rose-700 transition">Sim, limpar tudo</button>
+      </div>
+    </div>
+  </div>
 
-                <h1 class="font-display text-3xl sm:text-4xl md:text-[2.6rem] font-extrabold tracking-tight text-white leading-tight">
-                    Meu Guia de Suporte e Apoio
-                </h1>
+  <!-- Container Principal -->
+  <main id="capture-area" class="max-w-3xl mx-auto bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden">
+    
+    <!-- Cabeçalho -->
+    <header class="pdf-section bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-8">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-indigo-500/20 text-indigo-200 border border-indigo-400/30">
+          Protocolo de Regulação
+        </span>
+        <span id="data-atual" class="text-xs text-slate-400 font-medium"></span>
+      </div>
 
-                <!-- Cartões de Identificação (Gabi & Thiago) -->
-                <div class="flex flex-wrap items-center justify-center gap-3 mt-6">
-                    <div class="flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2 rounded-2xl">
-                        <span class="w-7 h-7 rounded-xl bg-indigo-500/30 flex items-center justify-center text-indigo-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        </span>
-                        <div class="text-left">
-                            <span class="block text-[10px] uppercase tracking-wider text-slate-300 font-semibold leading-none">Preenchido por</span>
-                            <span class="font-display font-bold text-sm sm:text-base text-white">Gabi</span>
-                        </div>
-                    </div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+        Guia de Suporte e Apoio
+      </h1>
+      <p class="text-sm sm:text-base text-slate-300 mt-2 leading-relaxed">
+        Preencho este guia em um momento tranquilo, tocando nos cartões que refletem o que eu preciso em momentos de sobrecarga. Depois, gero o PDF e envio para o <strong class="text-white">Thiago</strong> — para que ele saiba exatamente como me apoiar com respeito e segurança.
+      </p>
 
-                    <div class="flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2 rounded-2xl">
-                        <span class="w-7 h-7 rounded-xl bg-emerald-500/30 flex items-center justify-center text-emerald-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        </span>
-                        <div class="text-left">
-                            <span class="block text-[10px] uppercase tracking-wider text-slate-300 font-semibold leading-none">Rede de Apoio</span>
-                            <span class="font-display font-bold text-sm sm:text-base text-white">Thiago</span>
-                        </div>
-                    </div>
-                </div>
+      <!-- Cartões de Identificação -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
+        <div class="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3.5 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/30 flex items-center justify-center text-lg font-bold text-indigo-200">G</div>
+          <div>
+            <p class="text-[11px] uppercase tracking-wider text-indigo-200 font-semibold">Perfil de Regulação</p>
+            <p class="text-base font-bold text-white">Gabi</p>
+          </div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3.5 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/30 flex items-center justify-center text-lg font-bold text-emerald-200">T</div>
+          <div>
+            <p class="text-[11px] uppercase tracking-wider text-emerald-200 font-semibold">Rede de Apoio / Suporte</p>
+            <p class="text-base font-bold text-white">Thiago</p>
+          </div>
+        </div>
+      </div>
+    </header>
 
-                <!-- Caixa de orientação acolhedora -->
-                <div class="mt-7 max-w-2xl bg-slate-950/40 border border-white/10 rounded-2xl px-5 py-4 text-sm sm:text-[15px] text-slate-200 leading-relaxed">
-                    Oi, <strong class="text-white font-semibold">Gabi</strong>! Preencha este guia em um momento calmo, tocando nos cartões que fazem sentido para você. Depois, clique em <strong class="text-white font-semibold">Baixar PDF</strong> e envie para o <strong class="text-white font-semibold">Thiago</strong> — assim ele saberá exatamente como te apoiar com respeito e segurança.
-                </div>
-            </div>
+    <!-- Corpo do Formulário -->
+    <div class="p-6 sm:p-8 space-y-8">
+
+      <!-- SEÇÃO 1: Sinais de Sobrecarga -->
+      <section class="pdf-section space-y-3" data-section="amber">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              1. Sinais de Sobrecarga (Pré-crise)
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Como perceber que minha energia está acabando antes da crise escalar:</p>
+          </div>
+          <span class="counter-badge px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 whitespace-nowrap">0 selecionados</span>
         </div>
 
-        <!-- Corpo do Formulário -->
-        <form id="form-suporte" class="p-5 sm:p-8 md:p-10 space-y-10" onsubmit="event.preventDefault();">
-            
-            <!-- SEÇÃO 1: SINAIS DE SOBRECARGA -->
-            <section class="evitar-quebra" data-secao="sinal">
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
-                    <div class="flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 font-display font-bold text-sm flex items-center justify-center">01</span>
-                        <div>
-                            <h2 class="font-display text-lg sm:text-xl font-bold text-slate-900">Sinais de sobrecarga</h2>
-                            <p class="text-xs sm:text-sm text-slate-500">Como o Thiago pode perceber que minha bateria está acabando:</p>
-                        </div>
-                    </div>
-                    <span class="contador-secao text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200/70">0 selecionados</span>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-sinal">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">😶</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Fico muito silenciosa ou perco a fala temporariamente (Mutismo)</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
+        <div class="grid grid-cols-1 gap-2.5">
+          <div class="option-card selected border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="amber" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Fico em silêncio repentino ou com dificuldade para falar (Mutismo / Shutdown)</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
 
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-sinal">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">⚡</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Agitação motora ou movimentos repetitivos mais intensos (Stimming)</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
+          <div class="option-card selected border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="amber" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Agitação motora ou movimentos repetitivos mais intensos (Stimming)</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
 
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-sinal">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">💡</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Fico irritada ou hipersensível a barulhos, luzes, cheiros ou toques</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
+          <div class="option-card border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="amber" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Sinto vontade urgente de sair do lugar ou me isolar</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
 
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-sinal">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🏃</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Sinto vontade urgente de sair do lugar ou me isolar</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
+          <div class="option-card border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="amber" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Começo a chorar ou demonstrar angústia intensa (Meltdown)</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
 
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-sinal">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🧊</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Fico paralisada e com dificuldade para processar o que falam (Shutdown)</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-sinal">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🌊</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Começo a chorar ou demonstrar angústia intensa (Meltdown)</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-                </div>
-            </section>
-
-            <!-- SEÇÃO 2: O QUE NÃO FAZER -->
-            <section class="evitar-quebra" data-secao="evitar">
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
-                    <div class="flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-xl bg-rose-100 text-rose-700 font-display font-bold text-sm flex items-center justify-center">02</span>
-                        <div>
-                            <h2 class="font-display text-lg sm:text-xl font-bold text-slate-900">O que NÃO fazer na crise</h2>
-                            <p class="text-xs sm:text-sm text-slate-500">Atitudes que aumentam minha sobrecarga e devem ser evitadas:</p>
-                        </div>
-                    </div>
-                    <span class="contador-secao text-xs font-semibold px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200/70">0 selecionados</span>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-evitar" checked>
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">👁️</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Exigir ou forçar contato visual comigo</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-evitar" checked>
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🫂</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Fazer contato físico sem pedir permissão antes (abraçar, tocar, segurar)</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-evitar" checked>
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">❓</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Me fazer perguntas ou exigir que eu tome decisões na hora</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-evitar" checked>
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🗣️</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Puxar conversa sobre assuntos aleatórios para tentar me distrair</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-evitar">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🏠</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Ficar no mesmo ambiente que eu quando eu precisar ficar sozinha</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-evitar">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🚶</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Sair do ambiente e me deixar sozinha (preciso que ele fique por perto)</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-evitar">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">⏱️</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Apressar minha recuperação ou minimizar o que sinto ("já passou", "não é nada")</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-evitar">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🛑</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Me impedir de sair de um local se eu precisar de espaço para me regular</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-                </div>
-            </section>
-
-            <!-- SEÇÃO 3: O QUE AJUDA -->
-            <section class="evitar-quebra" data-secao="ajudar">
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
-                    <div class="flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 font-display font-bold text-sm flex items-center justify-center">03</span>
-                        <div>
-                            <h2 class="font-display text-lg sm:text-xl font-bold text-slate-900">O que ME AJUDA na crise</h2>
-                            <p class="text-xs sm:text-sm text-slate-500">Ações práticas do Thiago que me trazem conforto e segurança:</p>
-                        </div>
-                    </div>
-                    <span class="contador-secao text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/70">0 selecionados</span>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-ajudar">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🤫</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Deixar o ambiente silencioso e diminuir as luzes</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-ajudar">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🎧</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Me entregar fones/abafadores, água ou meus objetos reguladores</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-ajudar">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">📱</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Se comunicar comigo por mensagem de texto (WhatsApp/notas) em vez de falar</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-ajudar">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🛡️</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Assumir o controle externo (lidar com outras pessoas ou encerrar compromissos por mim)</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-ajudar">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">💛</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Oferecer presença calma e sem cobranças ("Estou aqui, leve o tempo que precisar")</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-ajudar">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🚪</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Me dar espaço físico, ficando por perto apenas para garantir minha segurança</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-                </div>
-            </section>
-
-            <!-- SEÇÃO 4: PREVISIBILIDADE, SEGURANÇA EMOCIONAL E MASKING -->
-            <section class="evitar-quebra" data-secao="rotina">
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
-                    <div class="flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 font-display font-bold text-sm flex items-center justify-center">04</span>
-                        <div>
-                            <h2 class="font-display text-lg sm:text-xl font-bold text-slate-900">Previsibilidade, Segurança Emocional e Masking</h2>
-                            <p class="text-xs sm:text-sm text-slate-500">Combinados da rotina que protegem minha energia mental:</p>
-                        </div>
-                    </div>
-                    <span class="contador-secao text-xs font-semibold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/70">0 selecionados</span>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-rotina">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">📅</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Me avisar sobre mudanças de planos ou imprevistos com a maior antecedência possível</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-rotina">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">👥</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Me antecipar detalhes de eventos (quem vai estar lá, horário de saída, como será o local)</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-rotina">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🔋</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Combinarmos um "sinal discreto" para quando minha bateria social acabar e precisarmos sair</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-rotina">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🎭</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Em casa, eu não preciso "mascarar" (sem cobrança por expressões faciais ou tom de voz)</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-rotina">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">🛌</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Respeitar meu tempo de descanso e silêncio após eventos sociais ou dias intensos</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer relative block">
-                        <input type="checkbox" class="check-rotina">
-                        <div class="card-opcao flex items-center justify-between gap-3.5 p-4 border-2 border-slate-200/90 rounded-2xl bg-slate-50/60 text-slate-700 font-medium h-full">
-                            <div class="flex items-center gap-3.5">
-                                <div class="icone flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 transition-colors text-lg">💬</div>
-                                <span class="text-sm sm:text-[15px] leading-snug">Validar meus desconfortos sensoriais e emocionais sem questionar se "é exagero"</span>
-                            </div>
-                            <span class="check-badge flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </div>
-                    </label>
-                </div>
-            </section>
-
-            <!-- CAMPO DE OBSERVAÇÕES PESSOAIS -->
-            <section class="pt-6 border-t border-slate-100 evitar-quebra">
-                <div class="bg-slate-50/80 border border-slate-200/80 rounded-2xl p-5 sm:p-6">
-                    <label for="observacoes" class="flex items-center gap-2.5 font-display text-base sm:text-lg font-bold text-slate-800 mb-1.5">
-                        <span class="w-7 h-7 rounded-lg bg-slate-200/80 text-slate-700 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                        </span>
-                        Outras informações importantes para o Thiago
-                    </label>
-                    <p class="text-xs sm:text-sm text-slate-500 mb-3">Exemplos: qual será o nosso sinal discreto, onde ficam seus fones ou itens de conforto, texturas/sons que acalmam...</p>
-                    <textarea id="observacoes" rows="3" class="w-full rounded-xl border-slate-200 border-2 p-4 bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all resize-y text-sm sm:text-[15px] text-slate-700 placeholder:text-slate-400" placeholder="Escreva aqui seus combinados ou anotações extras..."></textarea>
-                    <!-- Espelho invisível usado apenas durante a geração do PDF para evitar corte de texto longo -->
-                    <div id="observacoes-pdf-mirror" class="hidden w-full rounded-xl border-slate-200 border-2 p-4 bg-white text-sm sm:text-[15px] text-slate-700 whitespace-pre-wrap leading-relaxed"></div>
-                </div>
-            </section>
-
-            <!-- BARRA DE AÇÕES -->
-            <div id="botoes-acao" class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 print-hidden">
-                <div class="text-sm text-slate-500 font-medium">
-                    Total marcado: <span id="contador-total" class="font-display font-bold text-slate-900">0</span> itens
-                </div>
-
-                <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <button type="button" onclick="abrirModalLimpar()" class="flex-1 sm:flex-initial py-3 px-5 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200 font-semibold text-sm rounded-xl transition-all">
-                        Limpar seleção
-                    </button>
-                    <button id="btn-pdf" type="button" onclick="baixarPDF()" class="flex-1 sm:flex-initial py-3 px-7 bg-gradient-to-r from-slate-900 to-indigo-950 hover:from-slate-800 hover:to-indigo-900 text-white font-semibold text-sm rounded-xl transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-slate-900/15 active:scale-[0.98]">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                        <span id="btn-pdf-texto">Baixar PDF</span>
-                    </button>
-                </div>
-            </div>
-            
-        </form>
-    </div>
-
-    <!-- Modal Customizado de Confirmação (sem alert/confirm nativo) -->
-    <div id="modal-limpar" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 print-hidden">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 transform transition-all">
-            <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-            </div>
-            <h3 class="font-display text-lg font-bold text-slate-900 mb-1">Desmarcar todas as opções?</h3>
-            <p class="text-sm text-slate-500 leading-relaxed mb-6">Isso vai limpar todos os cartões selecionados e o campo de observações para você recomeçar do zero.</p>
-            <div class="flex items-center gap-3">
-                <button type="button" onclick="fecharModalLimpar()" class="flex-1 py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-colors">
-                    Cancelar
-                </button>
-                <button type="button" onclick="confirmarLimpar()" class="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-sm transition-colors">
-                    Sim, limpar
-                </button>
-            </div>
+          <div class="option-card selected border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="amber" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Hipersensibilidade imediata a luzes, sons, cheiros ou toques</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
         </div>
+      </section>
+
+      <!-- SEÇÃO 2: O que EVITAR (Gatilhos) -->
+      <section class="pdf-section space-y-3" data-section="rose">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+              2. O que o Thiago NÃO pode fazer (Evitar)
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Ações que aumentam a sobrecarga e devem ser evitadas na crise:</p>
+          </div>
+          <span class="counter-badge px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 whitespace-nowrap">0 selecionados</span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-2.5">
+          <div class="option-card selected border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="rose" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Exigir contato visual direto ou pedir para eu olhar nos olhos</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+
+          <div class="option-card selected border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="rose" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Fazer contato físico sem pedir permissão antes (abraçar, tocar, segurar)</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+
+          <div class="option-card selected border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="rose" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Puxar conversa sobre assuntos aleatórios para tentar me distrair</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+
+          <div class="option-card selected border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="rose" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Fazer muitas perguntas seguidas ou exigir respostas imediatas</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+
+          <div class="option-card border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="rose" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Ficar no mesmo ambiente invadindo meu espaço (preciso ficar sozinha)</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+
+          <div class="option-card selected border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="rose" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Sair do ambiente e me deixar sozinha (preciso que ele fique por perto)</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+
+          <div class="option-card border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="rose" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Minimizar o que estou sentindo ("não é para tanto", "tenta relaxar")</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 3: O que AJUDA -->
+      <section class="pdf-section space-y-3" data-section="emerald">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              3. O que AJUDA na minha regulação
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Atitudes que trazem segurança e ajudam a desacelerar:</p>
+          </div>
+          <span class="counter-badge px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 whitespace-nowrap">0 selecionados</span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-2.5">
+          <div class="option-card selected border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="emerald" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Reduzir estímulos do ambiente (apagar luzes fortes, diminuir barulhos)</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+
+          <div class="option-card selected border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="emerald" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Comunicar apenas por mensagens de texto curtas ou sinais combinados</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+
+          <div class="option-card selected border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="emerald" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Permanecer por perto em silêncio, oferecendo presença calma sem cobranças</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+
+          <div class="option-card border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="emerald" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Trazer itens de conforto sensorial (fone de ouvido, cobertor, água)</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+
+          <div class="option-card border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="emerald" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Assumir a comunicação com outras pessoas caso estejamos fora de casa</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 4: Previsibilidade e Masking -->
+      <section class="pdf-section space-y-3" data-section="indigo">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+              4. Previsibilidade e Descanso do Masking
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Combinados para evitar desgaste social e surpresas no dia a dia:</p>
+          </div>
+          <span class="counter-badge px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 whitespace-nowrap">0 selecionados</span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-2.5">
+          <div class="option-card selected border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="indigo" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Avisar com antecedência sobre qualquer mudança de planos, horários ou visitas</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+
+          <div class="option-card selected border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="indigo" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Respeitar quando minha "bateria social" acabar e precisarmos ir embora</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+
+          <div class="option-card border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="indigo" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Não cobrar expressões faciais simpáticas ou máscara social (masking) em casa</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+
+          <div class="option-card border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 bg-white" data-theme="indigo" onclick="toggleCard(this)">
+            <span class="text-sm font-medium text-slate-800">Informar antes quem estará no ambiente e quanto tempo o evento vai durar</span>
+            <div class="check-circle"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 5: Observações e Sinal Combinado -->
+      <section class="pdf-section space-y-2">
+        <label for="observacoes" class="block text-sm font-bold text-slate-900">
+          5. Observações pessoais / Sinal discreto combinado
+        </label>
+        <p class="text-xs text-slate-500">Escreva aqui qualquer detalhe específico, gatilho sensorial ou código combinado entre nós:</p>
+        <textarea id="observacoes" rows="3" placeholder="Ex.: Se eu tocar no seu pulso duas vezes, significa que preciso sair do ambiente sem explicar..." class="w-full rounded-2xl border border-slate-200 p-3.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition"></textarea>
+      </section>
+
+      <!-- Barra de Ações (Oculta no PDF) -->
+      <div class="no-print pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <button type="button" onclick="abrirModalReset()" class="w-full sm:w-auto px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition">
+          Limpar seleção
+        </button>
+
+        <button type="button" onclick="baixarPDF()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Baixar PDF
+        </button>
+      </div>
+
     </div>
+  </main>
 
-    <!-- Notificação Toast Suave -->
-    <div id="toast" class="fixed bottom-5 right-5 z-50 translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-medium print-hidden">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-        <span id="toast-mensagem">PDF gerado com sucesso!</span>
-    </div>
+  <script>
+    // Preenche a data atual no cabeçalho
+    const hoje = new Date();
+    document.getElementById('data-atual').textContent = hoje.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
 
-    <script>
-        // Atualiza contadores por seção e o contador geral
-        function atualizarContadores() {
-            const secoes = document.querySelectorAll('section[data-secao]');
-            let totalGeral = 0;
+    // Alterna seleção do cartão e atualiza contadores
+    function toggleCard(card) {
+      card.classList.toggle('selected');
+      atualizarContadores();
+    }
 
-            secoes.forEach(secao => {
-                const marcados = secao.querySelectorAll('input[type="checkbox"]:checked').length;
-                totalGeral += marcados;
-                const badge = secao.querySelector('.contador-secao');
-                if (badge) {
-                    badge.textContent = marcados === 1 ? '1 selecionado' : `${marcados} selecionados`;
-                }
-            });
-
-            const elTotal = document.getElementById('contador-total');
-            if (elTotal) elTotal.textContent = totalGeral;
+    function atualizarContadores() {
+      document.querySelectorAll('section[data-section]').forEach(section => {
+        const total = section.querySelectorAll('.option-card.selected').length;
+        const badge = section.querySelector('.counter-badge');
+        if (badge) {
+          badge.textContent = `${total} ${total === 1 ? 'selecionado' : 'selecionados'}`;
         }
+      });
+    }
 
-        // Ouve alterações em todos os checkboxes
-        document.querySelectorAll('input[type="checkbox"]').forEach(chk => {
-            chk.addEventListener('change', atualizarContadores);
-        });
+    // Modal de limpeza
+    function abrirModalReset() {
+      const modal = document.getElementById('reset-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
 
-        // Inicializa contadores ao carregar
-        window.addEventListener('DOMContentLoaded', atualizarContadores);
+    function fecharModalReset() {
+      const modal = document.getElementById('reset-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
 
-        // Controle do Modal de Limpeza
-        function abrirModalLimpar() {
-            const modal = document.getElementById('modal-limpar');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+    function confirmarReset() {
+      document.querySelectorAll('.option-card.selected').forEach(card => {
+        card.classList.remove('selected');
+      });
+      document.getElementById('observacoes').value = '';
+      atualizarContadores();
+      fecharModalReset();
+    }
+
+    // Exportação PDF corrigida para mobile e desktop (sem corte lateral)
+    async function baixarPDF() {
+      const loading = document.getElementById('pdf-loading');
+      loading.classList.remove('hidden');
+      loading.classList.add('flex');
+
+      const scrollAtualX = window.scrollX;
+      const scrollAtualY = window.scrollY;
+      window.scrollTo(0, 0);
+
+      // Cria um container off-screen com largura fixa de página A4 (760px)
+      const original = document.getElementById('capture-area');
+      const clone = original.cloneNode(true);
+
+      // Remove botões que não devem sair no PDF
+      clone.querySelectorAll('.no-print').forEach(el => el.remove());
+
+      // Substitui o textarea por uma div formatada para não cortar texto longo
+      const textareaOriginal = document.getElementById('observacoes');
+      const textareaClone = clone.querySelector('#observacoes');
+      if (textareaClone) {
+        const texto = textareaOriginal.value.trim() || 'Nenhuma observação adicional registrada.';
+        const boxTexto = document.createElement('div');
+        boxTexto.className = 'w-full rounded-2xl border border-slate-200 bg-slate-50 p-3.5 text-sm text-slate-800 whitespace-pre-wrap leading-relaxed';
+        boxTexto.textContent = texto;
+        textareaClone.parentNode.replaceChild(boxTexto, textareaClone);
+      }
+
+      // Wrapper posicionado em (0, 0) com largura desktop A4 para impedir corte no celular
+      const wrapper = document.createElement('div');
+      wrapper.style.position = 'absolute';
+      wrapper.style.top = '0';
+      wrapper.style.left = '0';
+      wrapper.style.width = '760px';
+      wrapper.style.backgroundColor = '#ffffff';
+      wrapper.style.zIndex = '-9999';
+      wrapper.style.padding = '0';
+      wrapper.style.margin = '0';
+
+      clone.style.maxWidth = '760px';
+      clone.style.width = '760px';
+      clone.style.margin = '0';
+      clone.style.borderRadius = '16px';
+      clone.style.boxShadow = 'none';
+
+      wrapper.appendChild(clone);
+      document.body.appendChild(wrapper);
+
+      // Aguarda um frame para garantir renderização completa do clone
+      await new Promise(resolve => setTimeout(resolve, 150));
+
+      const opcoes = {
+        margin: [10, 10, 10, 10],
+        filename: 'guia-suporte-gabi.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: 760,
+          width: 760
+        },
+        jsPDF: {
+          unit: 'mm',
+          format: 'a4',
+          orientation: 'portrait'
+        },
+        pagebreak: {
+          mode: ['css', 'legacy'],
+          avoid: ['.option-card', '.pdf-section']
         }
+      };
 
-        function fecharModalLimpar() {
-            const modal = document.getElementById('modal-limpar');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
+      try {
+        await html2pdf().set(opcoes).from(clone).save();
+      } finally {
+        document.body.removeChild(wrapper);
+        window.scrollTo(scrollAtualX, scrollAtualY);
+        loading.classList.add('hidden');
+        loading.classList.remove('flex');
+      }
+    }
 
-        function confirmarLimpar() {
-            document.getElementById('form-suporte').reset();
-            // Garante que mesmo os itens marcados por padrão sejam desmarcados
-            document.querySelectorAll('input[type="checkbox"]').forEach(chk => chk.checked = false);
-            atualizarContadores();
-            fecharModalLimpar();
-            mostrarToast('Todas as seleções foram limpas.');
-        }
-
-        // Exibe toast discreto
-        function mostrarToast(texto) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-mensagem').textContent = texto;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3200);
-        }
-
-        // Exportação otimizada para PDF
-        function baixarPDF() {
-            const botoes = document.getElementById('botoes-acao');
-            const textarea = document.getElementById('observacoes');
-            const mirror = document.getElementById('observacoes-pdf-mirror');
-            const elemento = document.getElementById('conteudo-pdf');
-
-            // Prepara o espelho do campo de texto para que anotações longas não sejam cortadas no PDF
-            const textoObs = textarea.value.trim();
-            mirror.textContent = textoObs || 'Nenhuma observação adicional registrada.';
-            if (!textoObs) {
-                mirror.classList.add('text-slate-400', 'italic');
-            } else {
-                mirror.classList.remove('text-slate-400', 'italic');
-            }
-
-            textarea.classList.add('hidden');
-            mirror.classList.remove('hidden');
-            botoes.style.display = 'none';
-
-            const opcoes = {
-                margin:       [10, 10, 10, 10],
-                filename:     'guia-suporte-gabi.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, windowWidth: 1024 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
-            };
-
-            html2pdf().set(opcoes).from(elemento).save().then(() => {
-                // Restaura estado interativo
-                textarea.classList.remove('hidden');
-                mirror.classList.add('hidden');
-                botoes.style.display = 'flex';
-                mostrarToast('PDF "guia-suporte-gabi.pdf" baixado!');
-            }).catch(() => {
-                textarea.classList.remove('hidden');
-                mirror.classList.add('hidden');
-                botoes.style.display = 'flex';
-                mostrarToast('Não foi possível gerar o PDF. Tente novamente.');
-            });
-        }
-    </script>
+    // Inicializa contadores ao carregar
+    atualizarContadores();
+  </script>
 </body>
 </html>
